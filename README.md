@@ -6,7 +6,57 @@ It is intended to make reusable templates, shared blocks, localisation, test dat
 
 ## Project status
 
-3T is at the initial scaffolding stage.
+Milestone #1 provides a working application shell, local SQLite migrations, and automated checks. Product workflows and authentication are not implemented yet.
+
+## Local development
+
+Use **Node 24.15+ (24.x)** and **npm 11+**. `.nvmrc` pins the CI runtime.
+
+```sh
+npm ci
+cp .env.example .env.local
+npm run db:migrate
+npm run db:smoke
+npm run dev
+```
+
+On PowerShell, use `Copy-Item .env.example .env.local` instead of `cp`.
+Open [localhost:3000](http://localhost:3000). Both development and production servers bind to loopback by default. This scaffold has no authentication; keep it local until the authentication milestone.
+
+`DATABASE_PATH` is server-only and defaults to `./data/3t.sqlite`. Relative paths resolve from the repository root; absolute local file paths are also accepted. No credentials are required. Next and the database scripts load `.env.local` using Next's environment loader. Environment files and SQLite files are ignored by Git. Run database commands from the repository root.
+
+Migrations run explicitly, never during a request or build. A missing or unmigrated database prevents the dashboard from loading; run `npm run db:migrate` before starting the app. Invalid path configuration fails with a clear configuration error without echoing its value. The local database directory must be writable by the server operator.
+
+## Contributor commands
+
+| Command                                   | Purpose                                                    |
+| ----------------------------------------- | ---------------------------------------------------------- |
+| `npm run dev`                             | Start the local development server                         |
+| `npm run db:migrate`                      | Create the database and apply pending migrations           |
+| `npm run db:smoke`                        | Verify database writes and reads, then roll back test data |
+| `npm run typecheck`                       | Generate Next route types and check TypeScript             |
+| `npm run lint`                            | Run ESLint                                                 |
+| `npm run format` / `npm run format:check` | Format / check formatting                                  |
+| `npm test`                                | Run configuration and persistence tests                    |
+| `npm run build`                           | Create the production build; no database required          |
+| `npm start`                               | Serve the production build after migrating the database    |
+| `npm run test:e2e`                        | Run Chromium smoke tests against the production build      |
+
+Before the first browser test run, run `npx playwright install chromium` (on Linux, use `--with-deps`). Run `npm run build` before `npm run test:e2e`. Browser tests initialise their own database in ignored `.cache/` and use port 3100. Unit/integration tests use temporary databases and do not touch your local development data. CI runs all the checks above, including production browser smoke tests; extend these tests as working product journeys arrive.
+
+## Repository structure
+
+- `src/app/`: App Router layout, dashboard, loading and error pages, global styles.
+- `src/server/`: server configuration and the Node SQLite persistence boundary.
+- `migrations/`: ordered SQL schema changes.
+- `scripts/`: explicit local database migration and smoke commands.
+- `tests/`: configuration and migration/persistence regression tests.
+- `e2e/`: production application browser smoke tests.
+- `docs/`: product and architectural decisions.
+
+Add future features as vertical slices when implemented; this scaffold deliberately has no speculative feature directories or schema. See [technology decisions](./docs/TECHNOLOGY.md#milestone-1-implementation) for migration authoring and Cloudflare constraints.
+
+## Planned v0.1.0 scope
 
 The first public milestone is **v0.1.0**, focused on a complete single-owner, self-hosted workflow with:
 

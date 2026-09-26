@@ -6,9 +6,9 @@ This file contains repository-level instructions for coding agents working on 3T
 
 Before implementing a task:
 
-1. Read `PRODUCT.md`.
-2. Read `ARCHITECTURE.md`.
-3. Read `TECHNOLOGY.md`.
+1. Read `docs/PRODUCT.md`.
+2. Read `docs/ARCHITECTURE.md`.
+3. Read `docs/TECHNOLOGY.md`.
 4. Inspect the existing code and tests before proposing structural changes.
 5. Preserve established conventions unless the task explicitly requires changing them.
 

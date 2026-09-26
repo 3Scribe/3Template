@@ -176,3 +176,27 @@ The initial supported deployment paths are:
 The architecture should not assume these will be the only targets.
 
 Multi-cloud deployment buttons/templates are a later milestone and should not be prematurely implemented as part of initial scaffolding.
+
+## Milestone #1 implementation
+
+- Next.js 16 App Router, React 19 and strict TypeScript. System fonts and plain CSS keep the shell small and builds independent of font downloads.
+- Node 24.15+ (24.x), using built-in `node:sqlite` for local storage. This API may emit Node's experimental warning on the pinned runtime. No ORM is necessary for the one metadata table; revisit a query layer when real product queries justify it.
+- `src/server/db/sqlite.ts` is the Node-only connection boundary. Server runtime entry points import `server-only`; CLI/tests enable the `react-server` export condition so they can exercise those same modules. Pure configuration validation has no runtime imports so Next configuration can validate it early.
+- `DATABASE_PATH` is a local file path, not a database URL. No `NEXT_PUBLIC_*` configuration or credentials exist. Do not pass server configuration to client components.
+- ESLint, Prettier, Node's test runner through `tsx`, and Playwright Chromium provide the quality baseline. The npm lockfile fixes dependency resolution; CI uses `npm ci`.
+
+### Local migrations
+
+`migrations/0001_instance.sql` introduces only `instance_metadata` and a scaffold-version marker. It contains no product schema or secrets. The runner separately maintains `_migrations` with checksums.
+
+To change schema, add the next ordered `NNNN_description.sql` file. Do not edit applied migrations. SQL files must not contain transaction control or operations such as `VACUUM` that cannot run inside a transaction. The local runner applies pending files and their ledger entries together in an immediate transaction; a failure rolls back the entire batch. Missing, modified, or out-of-order history is rejected. Checksums normalise CRLF to LF for Windows/Linux portability. Back up an existing installation before applying future schema changes; destructive changes need an explicit upgrade note. The initial migration is additive and has no configuration beyond the database path.
+
+Run migrations separately from application startup. Requests open the existing database read-only for the scaffold check; the smoke command demonstrates a parameterised write/read and rolls it back. Later write features should open writable connections explicitly and define their own transaction boundaries.
+
+### Cloudflare readiness and limits
+
+The SQL schema uses ordinary SQLite tables and statements suitable for D1, but D1 execution has not been verified in this milestone. Neither Node's file-backed SQLite driver nor the filesystem/transaction-based local migration runner should be bundled into a Worker. A future D1 adapter must use a Worker binding and D1's migration/batch facilities, with integration coverage for its transaction semantics. The dashboard's instance check is the small integration point to replace when that target is implemented; there are no Node dependencies in product/domain models.
+
+Cloudflare hosting also needs a compatible Next.js runtime adapter and a production `workerd` test. Select and pin that adapter against the framework version at the deployment milestone; a successful Node build does not prove Worker compatibility. See the official [Cloudflare Next.js guide](https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/) and [D1 documentation](https://developers.cloudflare.com/d1/). No Cloudflare deployment configuration or deployment workflow is added here.
+
+Before Milestone #2, retain the migration discipline, choose the first real project schema, and extend end-to-end coverage for project creation. Authentication must be implemented before exposing user data on a public instance.

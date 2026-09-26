@@ -185,6 +185,8 @@ Use repository/storage abstractions only where they provide a real portability b
 
 Schema and migrations must work predictably across supported persistence targets.
 
+The Milestone #1 scaffold keeps local Node SQLite connections and migration execution in `src/server/db/`, with portable schema SQL in `migrations/`. Migration execution is an explicit operator command, never a request side effect. The dashboard reads only the initial instance metadata; no product schema is implied by this table. A future D1 connection and migration runner must respect D1's own execution model rather than importing the Node filesystem driver.
+
 ## Translation provider boundary
 
 DeepL is the first supported provider.
@@ -206,9 +208,9 @@ Do not scatter DeepL-specific assumptions throughout UI and domain code.
 
 Deployment targets should use adapters.
 
-Core product code should decide *what* version is being deployed.
+Core product code should decide _what_ version is being deployed.
 
-Adapters should decide *how* that immutable version is delivered to a target platform.
+Adapters should decide _how_ that immutable version is delivered to a target platform.
 
 Do not couple the version model to Cloudflare.
 

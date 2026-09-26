@@ -1,4 +1,9 @@
 # Logs
+data/
+*.sqlite
+*.sqlite-*
+playwright-report/
+test-results/
 logs
 *.log
 npm-debug.log*

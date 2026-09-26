@@ -1,0 +1,113 @@
+:root {
+  color-scheme: light dark;
+  --background: #f7f8fa;
+  --surface: #fff;
+  --text: #202b3d;
+  --muted: #526075;
+  --border: #d6dce5;
+  --accent: #254fbc;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+  line-height: 1.6;
+}
+a {
+  color: var(--accent);
+  text-underline-offset: 0.2em;
+}
+button {
+  font: inherit;
+  background: var(--accent);
+  color: var(--surface);
+  border: 0;
+  border-radius: 0.4rem;
+  padding: 0.65rem 1rem;
+  cursor: pointer;
+}
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -5rem;
+  padding: 0.75rem;
+  background: var(--surface);
+  z-index: 10;
+}
+.skip-link:focus {
+  top: 0.5rem;
+}
+.app-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem clamp(1rem, 5vw, 4rem);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.brand {
+  font-size: 1.7rem;
+  font-weight: 800;
+  text-decoration: none;
+  color: var(--text);
+}
+.app-header span,
+footer,
+.eyebrow {
+  color: var(--muted);
+}
+nav {
+  margin-left: auto;
+}
+main {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 5vw, 4rem) 1.25rem;
+  min-height: 75vh;
+}
+h1 {
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  line-height: 1.2;
+  margin: 0.3rem 0 1rem;
+}
+h2 {
+  font-size: 1.35rem;
+}
+.eyebrow {
+  margin: 0;
+  font-size: 0.9rem;
+}
+.panel {
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  margin-top: 2.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+}
+.panel p {
+  max-width: 42rem;
+}
+footer {
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #111827;
+    --surface: #1b2536;
+    --text: #edf1fa;
+    --muted: #b6c3d8;
+    --border: #3e4c63;
+    --accent: #9abaff;
+  }
+}
