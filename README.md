@@ -46,7 +46,7 @@ See the repository `LICENSE` file for the full licence text.
 
 ## Repository documentation
 
-- [`PRODUCT.md`](./PRODUCT.md) — product scope and direction.
-- [`ARCHITECTURE.md`](./ARCHITECTURE.md) — domain model and architectural rules.
-- [`TECHNOLOGY.md`](./TECHNOLOGY.md) — technology choices and constraints.
+- [`PRODUCT.md`](./docs/PRODUCT.md) — product scope and direction.
+- [`ARCHITECTURE.md`](./docs/ARCHITECTURE.md) — domain model and architectural rules.
+- [`TECHNOLOGY.md`](./docs/TECHNOLOGY.md) — technology choices and constraints.
 - [`AGENTS.md`](./AGENTS.md) — instructions for coding agents working in this repository.
