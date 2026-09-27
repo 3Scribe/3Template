@@ -1,8 +1,8 @@
-# 3T Architecture
+# 3Template Architecture
 
 ## Architectural goals
 
-3T should favour a small, portable core with explicit domain boundaries.
+3Template should favour a small, portable core with explicit domain boundaries.
 
 The architecture should:
 
@@ -185,7 +185,13 @@ Use repository/storage abstractions only where they provide a real portability b
 
 Schema and migrations must work predictably across supported persistence targets.
 
-The Milestone #1 scaffold keeps local Node SQLite connections and migration execution in `src/server/db/`, with portable schema SQL in `migrations/`. Migration execution is an explicit operator command, never a request side effect. The dashboard reads only the initial instance metadata; no product schema is implied by this table. A future D1 connection and migration runner must respect D1's own execution model rather than importing the Node filesystem driver.
+Local Node SQLite connections and migration execution stay in `src/server/db/`, with portable schema SQL in `migrations/`. Migration execution is an explicit operator command, never a request side effect. The D1 adapter uses prepared statements and atomic batches. Services depend on the narrow query/batch interface; Node interactive transactions never leak into D1 service logic.
+
+### Owner authentication and credentials
+
+The Community owner is a singleton enforced by a database constraint. Setup requires deployment authorisation and commits owner/passkey/session creation atomically after server-side WebAuthn verification. Never persist a half-created owner or add a password fallback. Challenges are consumed once; session tokens are opaque and stored only as hashes, with server-side expiry and revocation checks.
+
+Credential IDs are independent of provider IDs. Multiple named entries may share a provider; only one can be its default. Secrets are versioned AES-GCM envelopes bound to the record and provider, with the root key supplied by deployment configuration. Only allowlisted metadata reaches clients. There is no reveal operation; replacement resets verification, and verification updates are conditional on the payload it checked. Provider schemas/verification belong behind a small server-only adapter. See [security implementation and operating rules](./SECURITY.md).
 
 ## Translation provider boundary
 

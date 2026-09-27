@@ -1,8 +1,8 @@
-# 3T Product Definition
+# 3Template Product Definition
 
 ## Purpose
 
-3T is an open-source template management and localisation platform for teams that need structured, reusable content rather than isolated files.
+3Template is an open-source template management and localisation platform for teams that need structured, reusable content rather than isolated files.
 
 The product should make it easy to build templates from reusable blocks, localise them, test them with realistic data, version them safely and deploy known versions to target environments.
 
@@ -119,7 +119,7 @@ The Community edition should not contain dormant enterprise complexity merely to
 
 ## Product boundaries
 
-3T is a template management and localisation product.
+3Template is a template management and localisation product.
 
 It is **not** intended to become:
 

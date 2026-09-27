@@ -1,12 +1,12 @@
-# 3T
+# 3Template
 
-3T is an open-source, self-hosted template management and localisation platform.
+3Template is an open-source, self-hosted template management and localisation platform.
 
 It is intended to make reusable templates, shared blocks, localisation, test data and deployments manageable without tying the core product to a specific cloud provider or proprietary service.
 
 ## Project status
 
-Milestone #1 provides a working application shell, local SQLite migrations, and automated checks. Product workflows and authentication are not implemented yet.
+Milestone #2 adds single-owner passkey authentication and encrypted credential management to the application shell. Real service-provider and template workflows remain future work.
 
 ## Local development
 
@@ -15,34 +15,36 @@ Use **Node 24.15+ (24.x)** and **npm 11+**. `.nvmrc` pins the CI runtime.
 ```sh
 npm ci
 cp .env.example .env.local
+# Configure APP_ORIGIN, CREDENTIAL_ROOT_KEY and OWNER_SETUP_TOKEN first.
 npm run db:migrate
 npm run db:smoke
 npm run dev
 ```
 
 On PowerShell, use `Copy-Item .env.example .env.local` instead of `cp`.
-Open [localhost:3000](http://localhost:3000). Both development and production servers bind to loopback by default. This scaffold has no authentication; keep it local until the authentication milestone.
+Open [localhost:3000](http://localhost:3000), enter your setup token and register the owner's passkey. Both development and production servers bind to loopback by default. Use HTTPS and your configured public domain when self-hosting. See [security setup](./docs/SECURITY.md) for generating the two deployment secrets, passkey requirements, sessions and backup responsibilities.
 
-`DATABASE_PATH` is server-only and defaults to `./data/3t.sqlite`. Relative paths resolve from the repository root; absolute local file paths are also accepted. No credentials are required. Next and the database scripts load `.env.local` using Next's environment loader. Environment files and SQLite files are ignored by Git. Run database commands from the repository root.
+`DATABASE_PATH` is server-only and defaults to `./data/3t.sqlite`. Relative paths resolve from the repository root; absolute local file paths are also accepted. Next and the database scripts load `.env.local` using Next's environment loader. Environment files and SQLite files are ignored by Git. Run database commands from the repository root. Keep the root encryption key outside the database and retain a secure backup; changing it does not rotate saved credentials.
 
-Migrations run explicitly, never during a request or build. A missing or unmigrated database prevents the dashboard from loading; run `npm run db:migrate` before starting the app. Invalid path configuration fails with a clear configuration error without echoing its value. The local database directory must be writable by the server operator.
+Migrations run explicitly, never during a request or build. Run `npm run db:migrate` before starting the app; this preserves Milestone #1 data and adds the authentication/credential tables. Invalid configuration fails securely without echoing secret values. The local database directory must be writable by the server operator.
 
 ## Contributor commands
 
-| Command                                   | Purpose                                                    |
-| ----------------------------------------- | ---------------------------------------------------------- |
-| `npm run dev`                             | Start the local development server                         |
-| `npm run db:migrate`                      | Create the database and apply pending migrations           |
-| `npm run db:smoke`                        | Verify database writes and reads, then roll back test data |
-| `npm run typecheck`                       | Generate Next route types and check TypeScript             |
-| `npm run lint`                            | Run ESLint                                                 |
-| `npm run format` / `npm run format:check` | Format / check formatting                                  |
-| `npm test`                                | Run configuration and persistence tests                    |
-| `npm run build`                           | Create the production build; no database required          |
-| `npm start`                               | Serve the production build after migrating the database    |
-| `npm run test:e2e`                        | Run Chromium smoke tests against the production build      |
+| Command                                   | Purpose                                                      |
+| ----------------------------------------- | ------------------------------------------------------------ |
+| `npm run dev`                             | Start the local development server                           |
+| `npm run db:migrate`                      | Create the database and apply pending migrations             |
+| `npm run db:smoke`                        | Verify database writes and reads, then roll back test data   |
+| `npm run typecheck`                       | Generate Next route types and check TypeScript               |
+| `npm run lint`                            | Run ESLint                                                   |
+| `npm run format` / `npm run format:check` | Format / check formatting                                    |
+| `npm test`                                | Run configuration and persistence tests                      |
+| `npm run build`                           | Create the production build; no database required            |
+| `npm run build:worker`                    | Bundle the portable security API for Workers (no deployment) |
+| `npm start`                               | Serve the production build after migrating the database      |
+| `npm run test:e2e`                        | Run Chromium smoke tests against the production build        |
 
-Before the first browser test run, run `npx playwright install chromium` (on Linux, use `--with-deps`). Run `npm run build` before `npm run test:e2e`. Browser tests initialise their own database in ignored `.cache/` and use port 3100. Unit/integration tests use temporary databases and do not touch your local development data. CI runs all the checks above, including production browser smoke tests; extend these tests as working product journeys arrive.
+Before the first browser test run, run `npx playwright install chromium` (on Linux, use `--with-deps`). Run `npm run build` before `npm run test:e2e`. Tests use temporary SQLite/D1 databases and random deployment keys, without touching development data. Browser tests use ports 3100/3101, real WebAuthn signatures from Chromium's virtual authenticator, and a real workerd runtime. CI runs these same checks. See [security tests and runtime scope](./docs/SECURITY.md).
 
 ## Repository structure
 
@@ -54,7 +56,7 @@ Before the first browser test run, run `npx playwright install chromium` (on Lin
 - `e2e/`: production application browser smoke tests.
 - `docs/`: product and architectural decisions.
 
-Add future features as vertical slices when implemented; this scaffold deliberately has no speculative feature directories or schema. See [technology decisions](./docs/TECHNOLOGY.md#milestone-1-implementation) for migration authoring and Cloudflare constraints.
+`src/features/auth/` and `src/features/credentials/` hold the feature UI, with server-only services alongside `src/server/auth/` and `src/server/credentials/`. `workers/security.ts` runs the same security API on D1. See [security architecture and runtime limits](./docs/SECURITY.md) and [technology decisions](./docs/TECHNOLOGY.md) before adding integrations.
 
 ## Planned v0.1.0 scope
 
@@ -90,7 +92,7 @@ Multi-user organisations, invitations, roles, reviewer permissions, language-lev
 
 ## Licence
 
-3T is licensed under the **GNU Affero General Public License v3.0**.
+3Template is licensed under the **GNU Affero General Public License v3.0**.
 
 See the repository `LICENSE` file for the full licence text.
 

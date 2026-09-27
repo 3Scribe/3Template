@@ -25,7 +25,7 @@ test("migrations are repeatable and data persists after reopening the database",
       migrate(db, resolve("migrations"));
       assert.equal(
         db.prepare("SELECT count(*) AS total FROM _migrations").get()?.total,
-        1,
+        2,
       );
     } finally {
       db.close();
@@ -80,6 +80,50 @@ test("failed migrations roll back and applied history cannot be rewritten", () =
     assert.throws(() => migrate(db, migrations), /has changed/);
     rmSync(join(migrations, "0001_instance.sql"));
     assert.throws(() => migrate(db, migrations), /missing/);
+  } finally {
+    db.close();
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test("Milestone #2 upgrades an existing Milestone #1 database without losing data", () => {
+  const directory = mkdtempSync(join(tmpdir(), "3template-upgrade-"));
+  const migrationDirectory = join(directory, "migrations");
+  mkdirSync(migrationDirectory);
+  copyFileSync(
+    resolve("migrations/0001_instance.sql"),
+    join(migrationDirectory, "0001_instance.sql"),
+  );
+  const db = openDatabase(join(directory, "db.sqlite"), true);
+  try {
+    migrate(db, migrationDirectory);
+    db.prepare("INSERT INTO instance_metadata VALUES (?, ?)").run(
+      "existing",
+      "preserve-me",
+    );
+    copyFileSync(
+      resolve("migrations/0002_owner_credentials.sql"),
+      join(migrationDirectory, "0002_owner_credentials.sql"),
+    );
+    migrate(db, migrationDirectory);
+    assert.equal(
+      db
+        .prepare("SELECT value FROM instance_metadata WHERE key = 'existing'")
+        .get()?.value,
+      "preserve-me",
+    );
+    assert.equal(
+      db.prepare("SELECT count(*) AS total FROM owner").get()?.total,
+      0,
+    );
+    assert.equal(
+      db
+        .prepare(
+          "SELECT value FROM instance_metadata WHERE key = 'scaffold_version'",
+        )
+        .get()?.value,
+      "1",
+    );
   } finally {
     db.close();
     rmSync(directory, { recursive: true, force: true });
