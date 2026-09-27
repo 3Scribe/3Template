@@ -52,6 +52,23 @@ test("security configuration rejects missing/invalid keys, origins and RP IDs", 
     assert.ok(value.includes(flag));
 });
 
+test("setup token cannot reuse the root key, including equivalent hexadecimal casing", () => {
+  for (const setupToken of [root, root.toUpperCase()]) {
+    assert.throws(
+      () => securityConfig({ ...env, OWNER_SETUP_TOKEN: setupToken }),
+      {
+        message:
+          "OWNER_SETUP_TOKEN must differ from CREDENTIAL_ROOT_KEY. Generate a separate setup token.",
+      },
+    );
+  }
+  assert.equal(securityConfig(env).setupToken, setup);
+  assert.equal(
+    securityConfig({ ...env, OWNER_SETUP_TOKEN: undefined }).setupToken,
+    undefined,
+  );
+});
+
 test("AES-GCM encrypts structured payloads with random IVs and rejects wrong keys, tampering and record swaps", async () => {
   const payload = { access: "private-access", secret: "private-secret" };
   const encrypted = await encryptSecret(root, "one", "provider", payload);

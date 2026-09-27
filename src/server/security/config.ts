@@ -34,6 +34,11 @@ export function securityConfig(env: Record<string, string | undefined>) {
       "OWNER_SETUP_TOKEN must contain 64 hexadecimal characters, or be removed after setup.",
     );
   }
+  if (setupToken?.toLowerCase() === rootKey.toLowerCase()) {
+    throw new Error(
+      "OWNER_SETUP_TOKEN must differ from CREDENTIAL_ROOT_KEY. Generate a separate setup token.",
+    );
+  }
   return {
     rootKey,
     origin: origin.origin,

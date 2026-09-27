@@ -11,6 +11,8 @@ Use Node 24.x, run `npm ci`, copy `.env.example` to `.env.local`, then supply:
 - `CREDENTIAL_ROOT_KEY`: 64 hexadecimal characters representing 32 cryptographically random bytes. This is deployment-level secret configuration, never stored in the database.
 - `OWNER_SETUP_TOKEN`: a separate 64-character random hexadecimal token required to begin first-run setup. Give it only to the owner and remove it from deployment configuration after setup. If removed, remove the variable entirely rather than leaving it empty.
 
+The setup token must differ from the root encryption key. Configuration rejects reuse, including hexadecimal values that differ only in letter case. The setup token is entered into the browser; the root encryption key must remain exclusively in deployment secret configuration. If the values were configured identically, generate a new setup token rather than changing the encryption key for existing credentials.
+
 Generate each value separately with `node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"`. Transfer the output directly into your deployment secret configuration. Never commit it or paste it into tickets, logs or chat. The application does not generate or save these values for you. Environment files are ignored by Git. Back up the root key separately from the database using your normal secure operational process.
 
 Run `npm run db:migrate`, then `npm run dev` (or `npm run build` and `npm start`). Missing/invalid security configuration denies requests; the runtime validator identifies invalid configuration without echoing its value. Database CLI commands and production compilation do not need security keys. No credentials are included in builds.
