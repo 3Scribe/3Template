@@ -33,6 +33,27 @@ Those belong to a later commercial/cloud edition.
 
 Do not turn 3T into an email-delivery or campaign-management product.
 
+## Product naming
+
+The official product name is **3Template**.
+
+`3T` is only an informal conversational shorthand used during planning and discussion.
+
+In repository-facing work, always use **3Template** in:
+
+- User-facing UI copy.
+- Documentation.
+- README content.
+- Issue and milestone descriptions.
+- Commit messages.
+- Release notes.
+- PR descriptions.
+- Comments intended to explain product behaviour.
+
+Do not introduce `3T` as a product name in the application or documentation.
+
+Shorter technical identifiers may be used only where required by tooling, package naming, environment variables, database names, or similar implementation constraints.
+
 ## Architectural invariants
 
 These rules are intentional and should not be changed casually.
