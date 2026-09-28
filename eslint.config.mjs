@@ -7,6 +7,9 @@ export default defineConfig([
   ...nextTypescript,
   globalIgnores([
     ".next/**",
+    ".cache/**",
+    "out/**",
+    ".wrangler/**",
     "next-env.d.ts",
     "playwright-report/**",
     "test-results/**",

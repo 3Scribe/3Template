@@ -1,5 +1,5 @@
 {
-  "name": "3t",
+  "name": "3template",
   "version": "0.1.0-dev",
   "private": true,
   "license": "AGPL-3.0-only",
@@ -11,6 +11,7 @@
   "scripts": {
     "dev": "next dev --hostname 127.0.0.1",
     "build": "next build",
+    "build:worker": "node --import tsx scripts/build-worker.ts",
     "start": "next start --hostname 127.0.0.1",
     "typecheck": "next typegen && tsc --noEmit",
     "lint": "eslint . --max-warnings 0",
@@ -23,20 +24,31 @@
   },
   "dependencies": {
     "@next/env": "^16.3.6",
+    "@simplewebauthn/browser": "^14.0.0",
+    "@simplewebauthn/server": "^14.0.3",
     "next": "^16.3.6",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "server-only": "^0.0.1"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260927.1",
     "@playwright/test": "^1.63.0",
     "@types/node": "^24.19.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "esbuild": "^0.28.2",
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.3.6",
+    "miniflare": "^4.20260730.0",
     "prettier": "^3.9.9",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "miniflare": {
+      "sharp": "^0.35.4",
+      "undici": "^7.29.0"
+    }
   }
 }

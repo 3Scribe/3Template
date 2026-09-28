@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This file contains repository-level instructions for coding agents working on 3T.
+This file contains repository-level instructions for coding agents working on 3Template.
 
 ## Read before changing code
 
@@ -16,7 +16,7 @@ Do not treat this repository as a blank-slate prototype once implementation has 
 
 ## Product constraints
 
-3T Community is a **single-owner, self-hosted template management and localisation product**.
+3Template Community is a **single-owner, self-hosted template management and localisation product**.
 
 For v0.1.0, do not introduce:
 
@@ -31,7 +31,7 @@ For v0.1.0, do not introduce:
 
 Those belong to a later commercial/cloud edition.
 
-Do not turn 3T into an email-delivery or campaign-management product.
+Do not turn 3Template into an email-delivery or campaign-management product.
 
 ## Product naming
 

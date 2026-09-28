@@ -21,5 +21,6 @@ jobs:
       - run: npm run db:migrate
       - run: npm run db:smoke
       - run: npm run build
+      - run: npm run build:worker
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e

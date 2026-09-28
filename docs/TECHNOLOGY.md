@@ -1,4 +1,4 @@
-# 3T Technology
+# 3Template Technology
 
 ## Principles
 
@@ -199,4 +199,8 @@ The SQL schema uses ordinary SQLite tables and statements suitable for D1, but D
 
 Cloudflare hosting also needs a compatible Next.js runtime adapter and a production `workerd` test. Select and pin that adapter against the framework version at the deployment milestone; a successful Node build does not prove Worker compatibility. See the official [Cloudflare Next.js guide](https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/) and [D1 documentation](https://developers.cloudflare.com/d1/). No Cloudflare deployment configuration or deployment workflow is added here.
 
-Before Milestone #2, retain the migration discipline, choose the first real project schema, and extend end-to-end coverage for project creation. Authentication must be implemented before exposing user data on a public instance.
+## Milestone #2 implementation
+
+SimpleWebAuthn handles passkey ceremonies; Web Crypto provides AES-256-GCM and token hashing on Node and Workers. No ORM or authentication framework is added. `src/server/db/port.ts` captures the real SQLite/D1 query and atomic-batch boundary. The Worker security API and Node routes call the same server-only services. Milestone #1's D1 deferral above is superseded for this security slice: local workerd/D1 tests now exercise it, while full Next.js hosting on Workers remains separate deployment work.
+
+Read [SECURITY.md](./SECURITY.md) for required root-key/origin/setup-token configuration, migration details, session decisions, no-reveal rules, test-provider semantics and operational limitations. Product/project schema remains deferred.
